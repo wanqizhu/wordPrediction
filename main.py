@@ -1,9 +1,86 @@
-
-## this is just copied from Shakespeare
-
 import re
 #import pprint
 import random
+
+
+# data structure: tries
+class tries():
+	END = '_end'
+	def __init__(self, words):
+		self.trie = dict()
+		self.size = 0
+		for i in words:
+			self.insert(str(i))
+
+
+	def insert(self, word):
+		current_dict = self.trie
+		for letter in word:
+			current_dict = current_dict.setdefault(letter, {})
+
+		current_dict[self.END] = current_dict.get(self.END, 0) + 1 # increment if exists
+		self.size += 1
+
+`
+
+
+	def list(self, root=False):
+		if not root:
+			root = self.trie
+
+		self.temp = [] # storing the elements
+		self.list_recur(root, '')
+		return self.temp
+
+
+	def list_recur(self, root, string):
+		'''
+		recurse over each letter from root; string is the current substring leading to this node in the trie;
+
+		we add a word to self.temp when we reach the stopping point (self.END)
+
+		'''
+		for i in root:
+			if i == self.END:
+				self.temp.append(string)
+				continue
+			string2 = string + i
+			self.list_recur(root[i], string2)
+
+
+
+
+	def search(self, word):
+		current_dict = self.trie
+		for letter in word:
+			if letter in current_dict:
+				current_dict = current_dict[letter]
+			else:
+				return -1
+
+		if self.END not in current_dict:
+			return -1
+
+		return self.END
+
+
+
+
+
+
+# a = tries([174214, 124, 1498, 1983741 ,12489, 8421, 124, 849, 6438, 841290, 748310, 12478, 1498])
+
+# print(a.trie)
+
+# print(a.list())
+
+
+
+
+
+## this is just copied from Shakespeare
+
+
 
 # python 2
 class text_generator():
@@ -59,21 +136,21 @@ class text_generator():
 				start = max(set(self.two_gram_cnt[start]), key=self.two_gram_cnt[start].count) #pick the most frequent
 
 
-h = text_generator("Hamlet.txt")
-s = text_generator("The Taming of the Shrew.txt")
+# h = text_generator("Hamlet.txt")
+# s = text_generator("The Taming of the Shrew.txt")
 
-#random.seed(1)
+# #random.seed(1)
 
-# generate 20 lines from Hamlet
-for i in range(20):
-	h.line_from_two_gram()
-	print ''
+# # generate 20 lines from Hamlet
+# for i in range(20):
+# 	h.line_from_two_gram()
+# 	print ''
 
-# h.line_from_two_gram(start='death') # make a sentence start with death
-# h.line_from_two_gram(start='death', smooth=False) # make a sentence start with death, ALWAYS using the most common 2-gram
+# # h.line_from_two_gram(start='death') # make a sentence start with death
+# # h.line_from_two_gram(start='death', smooth=False) # make a sentence start with death, ALWAYS using the most common 2-gram
 
-# 20 lines from Shrew
-print '\n\n'
-for i in range(20):
-	s.line_from_two_gram()
-	print ''
+# # 20 lines from Shrew
+# print '\n\n'
+# for i in range(20):
+# 	s.line_from_two_gram()
+# 	print ''
